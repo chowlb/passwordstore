@@ -3,6 +3,7 @@ package com.chowlb.keystore;
 public class PasswordEntry {
 	int _id;
 	String _name;
+	String _username;
 	String _password;
 	String _website;
 	String _description;
@@ -11,16 +12,18 @@ public class PasswordEntry {
 		
 	}
 	
-	public PasswordEntry(int id, String name, String password, String website, String description) {
+	public PasswordEntry(int id, String name, String username, String password, String website, String description) {
 		this._id = id;
 		this._name = name;
+		this._username = username;
 		this._password = password;
 		this._website = website;
 		this._description = description;
 	}
 	
-	public PasswordEntry(String name, String password, String website, String description) {
+	public PasswordEntry(String name, String username, String password, String website, String description) {
 		this._name = name;
+		this._username = username;
 		this._password = password;
 		this._website = website;
 		this._description = description;
@@ -33,13 +36,21 @@ public class PasswordEntry {
 	public void setID(int _id) {
 		this._id = _id;
 	}
-
+	
 	public String getName() {
 		return _name;
 	}
 
 	public void setName(String _name) {
 		this._name = _name;
+	}
+
+	public String getUsername() {
+		return _username;
+	}
+
+	public void setUsername(String _username) {
+		this._username = _username;
 	}
 
 	public String getPassword() {
@@ -64,6 +75,10 @@ public class PasswordEntry {
 
 	public void setDescription(String _description) {
 		this._description = _description;
+	}
+	
+	public String toString() {
+		return this._name;
 	}
 	
 	

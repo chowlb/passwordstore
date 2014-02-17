@@ -21,6 +21,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 	//Columns
 	private static final String KEY_ID = "id";
 	private static final String KEY_NAME = "name";
+	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
 	private static final String KEY_WEBSITE = "website";
 	private static final String KEY_DESCRIPTION = "description";
@@ -34,6 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		String CREATE_TABLE_PASS_STORE = "CREATE TABLE " + TABLE_PASS_STORE + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," 
 				+ KEY_NAME + " TEXT,"
+                + KEY_USERNAME + " TEXT,"
                 + KEY_PASSWORD + " TEXT,"
                 + KEY_WEBSITE + " TEXT,"
                 + KEY_DESCRIPTION + " TEXT"+ ")";
@@ -53,6 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		
 		ContentValues values = new ContentValues();
 		values.put(KEY_NAME, passEntry.getName());
+		values.put(KEY_USERNAME, passEntry.getUsername());
 		values.put(KEY_PASSWORD, passEntry.getPassword());
 		values.put(KEY_WEBSITE, passEntry.getWebsite());
 		values.put(KEY_DESCRIPTION, passEntry.getDescription());
@@ -65,13 +68,13 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 	public PasswordEntry getPasswordEntry(int id) {
 		SQLiteDatabase db = this.getReadableDatabase();
 		
-		Cursor cursor = db.query(TABLE_PASS_STORE, new String[] {KEY_ID, KEY_NAME, KEY_PASSWORD, KEY_WEBSITE, KEY_DESCRIPTION}, KEY_ID + "=?",
+		Cursor cursor = db.query(TABLE_PASS_STORE, new String[] {KEY_ID, KEY_NAME, KEY_USERNAME, KEY_PASSWORD, KEY_WEBSITE, KEY_DESCRIPTION}, KEY_ID + "=?",
 				new String[] {String.valueOf(id)}, null, null, null, null);
 		if(cursor != null)
 			cursor.moveToFirst();
 			
 		PasswordEntry passEntry = new PasswordEntry(Integer.parseInt(cursor.getString(0)),
-				cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+				cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
 		
 		return passEntry;
 	}
@@ -88,9 +91,11 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 				PasswordEntry passEntry = new PasswordEntry();
 				passEntry.setID(Integer.parseInt(cursor.getString(0)));
 				passEntry.setName(cursor.getString(1));
-				passEntry.setPassword(cursor.getString(2));
-				passEntry.setWebsite(cursor.getString(3));
-				passEntry.setDescription(cursor.getString(4));
+				passEntry.setUsername(cursor.getString(2));
+				passEntry.setPassword(cursor.getString(3));
+				passEntry.setWebsite(cursor.getString(4));
+				passEntry.setDescription(cursor.getString(5));
+				
 				
 				passEntryList.add(passEntry);
 			}while(cursor.moveToNext());
@@ -114,11 +119,11 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
 		 
 	    ContentValues values = new ContentValues();
+
 	    values.put(KEY_NAME, passEntry.getName());
+	    values.put(KEY_USERNAME, passEntry.getUsername());
 	    values.put(KEY_PASSWORD, passEntry.getPassword());
-
 	    values.put(KEY_WEBSITE, passEntry.getWebsite());
-
 	    values.put(KEY_DESCRIPTION, passEntry.getDescription());
 	 
 	    // updating row
