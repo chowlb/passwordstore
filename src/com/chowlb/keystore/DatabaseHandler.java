@@ -78,6 +78,26 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		
 		return passEntry;
 	}
+	
+	public PasswordEntry getPasswordEntry(String name) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		//Log.e("chowlb", "Call to getpasswordentry with name: " + name);
+		Cursor cursor = db.query(TABLE_PASS_STORE, new String[] {KEY_ID, KEY_NAME, KEY_USERNAME, KEY_PASSWORD, KEY_WEBSITE, KEY_DESCRIPTION}, KEY_NAME + "=?",
+				new String[] {String.valueOf(name)}, null, null, null, null);
+		if((cursor != null) && (cursor.getCount()> 0)) {
+			//Log.e("chowlb", "Cursor is not null");
+			cursor.moveToFirst();
+		
+			PasswordEntry passEntry = new PasswordEntry(Integer.parseInt(cursor.getString(0)),
+				cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
+			return passEntry;
+		}
+		else {
+			//Log.e("chowlb", "Cursor is null, returning null");
+			return null;
+		}
+	}
+	
 	 
 	// Getting All Contacts
 	public List<PasswordEntry> getAllPasswordEntry() {

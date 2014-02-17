@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.TextView;
 
 public class ListListener implements OnItemClickListener{
 	List<PasswordEntry> listItems;
@@ -22,8 +20,9 @@ public class ListListener implements OnItemClickListener{
 	
 	public void onItemClick(AdapterView parent, View view, int pos, long id) {
 		view.setBackgroundResource(R.color.DarkGrey);
-		Intent i = new Intent(Intent.ACTION_VIEW);
-		//(listItems.get(pos).getID());
-		activity.startActivity(i);
+		Intent intent = new Intent(activity, AddPasswordActivity.class);
+		PasswordEntry pe = listItems.get(pos);
+		intent.putExtra("item_id", String.valueOf(pe.getID()));
+		activity.startActivity(intent);
 	}
 }
