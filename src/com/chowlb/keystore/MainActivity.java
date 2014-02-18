@@ -8,11 +8,10 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -23,7 +22,7 @@ public class MainActivity extends Activity {
 	
 	DatabaseHandler db;
 	TextView emptyList;
-	LinearLayout layout;
+	RelativeLayout layout;
 	List<PasswordEntry> passEntryList;
 	ListView peListView;
 	private AdView adView;
@@ -53,35 +52,46 @@ public class MainActivity extends Activity {
 		adView.setAdUnitId("ca-app-pub-8858215261311943/5415676714");
 		adView.setAdSize(AdSize.BANNER);
 		
-		
+		//Check if password list is empty
 		if(passEntryList.isEmpty()) {
-			String log = "Password list is empty!";
-			//Log.e("chowlb", "Hiding list view");
 			
 			layout.removeView(peListView);
-			//Log.e("chowlb", "List view hidden");
-			LayoutParams lparams = new LayoutParams(
-					   LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			emptyList.setLayoutParams(lparams);
+			
+			RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
+					   LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			lparams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, adView.getId());
+			
+			RelativeLayout.LayoutParams toplparams = new RelativeLayout.LayoutParams(
+					   LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			toplparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, emptyList.getId());
+			
+			emptyList.setLayoutParams(toplparams);
 			adView.setLayoutParams(lparams);
-			//Log.e("chowlb", "Set layout params");
+			
 			emptyList.setText("No entries found. Press MENU and 'Add Entry'");
 			emptyList.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 			emptyList.setPadding(0, 10, 0, 0);
-			layout.addView(adView, 0);
-			layout.addView(emptyList, 1);
-			//Log.e("chowlb", "Added emptyList to LinearLayout");
 			
-			//Log.e("chowlb", log);
+			layout.addView(emptyList);
+			layout.addView(adView);
+			
 		}else {		
 			layout.removeView(emptyList);
-			LayoutParams lparams = new LayoutParams(
+			
+			RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
 					   LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			peListView.setLayoutParams(lparams);
-			layout.addView(peListView,0);
+			lparams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, adView.getId());
+			
+			RelativeLayout.LayoutParams toplparams = new RelativeLayout.LayoutParams(
+					   LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			toplparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, emptyList.getId());
+			
+			peListView.setLayoutParams(toplparams);
+			layout.addView(peListView);
+			
 			adView.setLayoutParams(lparams);
-			layout.addView(adView, 1);
-			peListView.setVisibility(View.VISIBLE);
+			layout.addView(adView);
+			
 			ArrayAdapter<PasswordEntry> adapter = new ArrayAdapter<PasswordEntry>(this,R.layout.password_list_layout, passEntryList);
 			peListView.setAdapter(adapter);
 			peListView.setOnItemClickListener(new ListListener(passEntryList, this));
@@ -95,9 +105,10 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		db = new DatabaseHandler(this);
 		emptyList = new TextView(this);
-		layout = (LinearLayout) findViewById(R.id.LinearLayout1);
+		layout = (RelativeLayout) findViewById(R.id.RelativeLayout1);
 		peListView = (ListView) findViewById(R.id.passwordEntryList);
-		//Log.e("chowlb", "CREATE");
+		
+		//Creating the actual layout (determines if we have a list or an empty list;
 		refreshMainView();
 		
 		AdRequest adRequest = new AdRequest.Builder().build();

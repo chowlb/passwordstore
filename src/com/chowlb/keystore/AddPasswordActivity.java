@@ -3,18 +3,23 @@ package com.chowlb.keystore;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class AddPasswordActivity extends Activity implements OnClickListener{
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
+//public class AddPasswordActivity extends Activity implements OnClickListener{
+public class AddPasswordActivity extends Activity{
 	EditText name;
 	EditText username;
 	EditText password;
@@ -30,7 +35,8 @@ public class AddPasswordActivity extends Activity implements OnClickListener{
 	int peID;
 	int newEntry = 1;
 	DatabaseHandler db;
-	Button deletebutton;
+	
+	private AdView adView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,57 +49,60 @@ public class AddPasswordActivity extends Activity implements OnClickListener{
 		password = (EditText) findViewById(R.id.passwordEditText);
 		website = (EditText) findViewById(R.id.websiteEditText);
 		description = (EditText) findViewById(R.id.descriptionEditText);
-		deletebutton = (Button) findViewById(R.id.deleteButton);
 		
 		if(getIntent().hasExtra("item_id")) {
 			String itemId = getIntent().getStringExtra("item_id"); 
-			Log.e("chowlb", "We have extra item_id: " + itemId);
 			PasswordEntry pe = db.getPasswordEntry(Integer.parseInt(itemId));
-			//deletebutton.setOnClickListener(this);
-			Log.e("chowlb", "We have PE");
-			newEntry = 1;
+			
+			newEntry = 0;
 			populateView(pe);
-			Log.e("chowlb", "we have populated the view");
 		}else {
 			newEntry = 1;
-			Log.e("chowlb", "No extras sent, not populating screen");
 		}
 		
+		adView = new AdView(this);
+		adView.setAdUnitId("ca-app-pub-8858215261311943/5415676714");
+		adView.setAdSize(AdSize.BANNER);
+		
+		RelativeLayout layout = (RelativeLayout) findViewById(R.id.addPasswordLayout);
+		RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
+				   LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		lparams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, adView.getId());
+		
+		adView.setLayoutParams(lparams);
+		layout.addView(adView);
+		
+		AdRequest adRequest = new AdRequest.Builder().build();
+		adView.loadAd(adRequest);
 		
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.add_password, menu);
+		if(Build.VERSION.SDK_INT >= 11) {
+			selectMenu(menu);
+		}
 		return true;
 	}
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		if(Build.VERSION.SDK_INT < 11) {
+			selectMenu(menu);
+		}
+		return true;
+	}
+	
+	public void selectMenu(Menu menu) {
+		menu.clear();
+		MenuInflater inflater = getMenuInflater();
 		if(newEntry == 0) {
-			MenuItem meIt = (MenuItem) findViewById(R.id.saveMenuItem);
-			Log.e("chowlb", "We have MenuItem");
-			meIt.setIcon(android.R.drawable.ic_menu_edit);
-			Log.e("chowlb", "We have changed icons");
-			meIt.setTitle(R.string.edit);
-			Log.e("chowlb", "we have set title");
-			MenuItem delIt = (MenuItem) findViewById(R.id.deleteMenuItem);
-			Log.e("chowlb", "we have delete menu item");
-			delIt.setVisible(true);
-			Log.e("chowlb", "we have set delete to visible");
+			inflater.inflate(R.menu.add_password_edit, menu);
 		}
 		else{
-			MenuItem meIt = (MenuItem) findViewById(R.id.saveMenuItem);
-			meIt.setIcon(android.R.drawable.ic_menu_save);
-			meIt.setTitle(R.string.save);
-			MenuItem delIt = (MenuItem) findViewById(R.id.deleteMenuItem);
-			delIt.setVisible(false);
+			inflater.inflate(R.menu.add_password, menu);
 		}
-		
-
-		
-		return super.onPrepareOptionsMenu(menu);
 	}
 	
 	@Override
@@ -101,7 +110,6 @@ public class AddPasswordActivity extends Activity implements OnClickListener{
 		switch(item.getItemId()){
 			case R.id.deleteMenuItem:
 				deleteEntry();
-				super.finish();
 				break;
 			case R.id.saveMenuItem:
 				processEntry();
@@ -112,9 +120,8 @@ public class AddPasswordActivity extends Activity implements OnClickListener{
 		return true;
 	}
 	
-	
 	public void processEntry() {
-		Log.e("chowlb", "ProcessEntry Start");
+		//Log.e("chowlb", "ProcessEntry Start");
 		nameValue = name.getText().toString();
 		usernameValue = username.getText().toString();
 		passwordValue = password.getText().toString();
@@ -151,8 +158,6 @@ public class AddPasswordActivity extends Activity implements OnClickListener{
 				}
 			}
 		}
-		
-		
 	}
 
 	public void populateView(PasswordEntry pe) {
@@ -165,54 +170,30 @@ public class AddPasswordActivity extends Activity implements OnClickListener{
 		description.setText(pe.getDescription());
 	}
 	
-	
-	public void cancelAll(View view) {
-		super.finish();
-	}
-
-	@Override
-	public void onClick(final View v) {
-		//Log.e("chowlb", "Clicked and v is " + v.getId() + " delete button id is " + deletebutton.getId());
-		if(v.getId()==deletebutton.getId()) {
-			new AlertDialog.Builder(this)
-				.setTitle("Delete")
-				.setMessage("Do you wish to delete " + db.getPasswordEntry(peID).getName() + "?")
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						db.deletePasswordEntry(db.getPasswordEntry(peID));
-						cancelAll(v);
-					}
-				})
-				.setNegativeButton(android.R.string.no, null).show();
-			
-			
-			
-		}
-		
-	}
-	
 	public void deleteEntry() {
-		//Log.e("chowlb", "Clicked and v is " + v.getId() + " delete button id is " + deletebutton.getId());
-		
-			new AlertDialog.Builder(this)
-				.setTitle("Delete")
-				.setMessage("Do you wish to delete " + db.getPasswordEntry(peID).getName() + "?")
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						db.deletePasswordEntry(db.getPasswordEntry(peID));
-					}
-				})
-				.setNegativeButton(android.R.string.no, null).show();
-			
-			
-			
-		
-		
+		new AlertDialog.Builder(this)
+			.setTitle("Delete")
+			.setMessage("Do you wish to delete " + db.getPasswordEntry(peID).getName() + "?")
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					db.deletePasswordEntry(db.getPasswordEntry(peID));
+					finish();
+				}
+			})
+			.setNegativeButton(android.R.string.no, null).show();
+	}
+	
+	public void togglePassword(View v) {
+		int inputType = password.getInputType();
+		//Log.e("chowlb", "InputType = " + inputType);
+		if(inputType == 1) {
+			//Log.e("chowlb", "Hiding password");
+			password.setInputType(129);
+		}else {
+			//Log.e("chowlb", "Showing password");
+			password.setInputType(1);
+		}
 	}
 }

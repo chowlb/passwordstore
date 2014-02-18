@@ -1,5 +1,7 @@
 package com.chowlb.keystore;
 
+
+
 public class PasswordEntry {
 	int _id;
 	String _name;
@@ -7,6 +9,8 @@ public class PasswordEntry {
 	String _password;
 	String _website;
 	String _description;
+	
+	
 	
 	public PasswordEntry() {
 		
@@ -80,6 +84,7 @@ public class PasswordEntry {
 	public String toString() {
 		return this._name;
 	}
+	
 	
 	
 }

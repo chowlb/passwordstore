@@ -3,11 +3,16 @@ package com.chowlb.keystore;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Base64;
+import android.util.Log;
 
 public class DatabaseHandler extends SQLiteOpenHelper{
 	//All Static Variables
@@ -25,6 +30,10 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 	private static final String KEY_PASSWORD = "password";
 	private static final String KEY_WEBSITE = "website";
 	private static final String KEY_DESCRIPTION = "description";
+	
+	private static byte[] key = {
+        0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79
+	};//"thisIsASecretKey";
 	
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,7 +65,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		ContentValues values = new ContentValues();
 		values.put(KEY_NAME, passEntry.getName());
 		values.put(KEY_USERNAME, passEntry.getUsername());
-		values.put(KEY_PASSWORD, passEntry.getPassword());
+		values.put(KEY_PASSWORD, encryptPassword(passEntry.getPassword()));
 		values.put(KEY_WEBSITE, passEntry.getWebsite());
 		values.put(KEY_DESCRIPTION, passEntry.getDescription());
 		
@@ -74,7 +83,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 			cursor.moveToFirst();
 			
 		PasswordEntry passEntry = new PasswordEntry(Integer.parseInt(cursor.getString(0)),
-				cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
+				cursor.getString(1), cursor.getString(2), decryptPassword(cursor.getString(3)), cursor.getString(4), cursor.getString(5));
 		
 		return passEntry;
 	}
@@ -89,7 +98,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 			cursor.moveToFirst();
 		
 			PasswordEntry passEntry = new PasswordEntry(Integer.parseInt(cursor.getString(0)),
-				cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
+				cursor.getString(1), cursor.getString(2), decryptPassword(cursor.getString(3)), cursor.getString(4), cursor.getString(5));
 			return passEntry;
 		}
 		else {
@@ -112,7 +121,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 				passEntry.setID(Integer.parseInt(cursor.getString(0)));
 				passEntry.setName(cursor.getString(1));
 				passEntry.setUsername(cursor.getString(2));
-				passEntry.setPassword(cursor.getString(3));
+				passEntry.setPassword(decryptPassword(cursor.getString(3)));
 				passEntry.setWebsite(cursor.getString(4));
 				passEntry.setDescription(cursor.getString(5));
 				
@@ -142,7 +151,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 
 	    values.put(KEY_NAME, passEntry.getName());
 	    values.put(KEY_USERNAME, passEntry.getUsername());
-	    values.put(KEY_PASSWORD, passEntry.getPassword());
+	    values.put(KEY_PASSWORD, encryptPassword(passEntry.getPassword()));
 	    values.put(KEY_WEBSITE, passEntry.getWebsite());
 	    values.put(KEY_DESCRIPTION, passEntry.getDescription());
 	 
@@ -164,4 +173,40 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		db.delete(TABLE_PASS_STORE, null, null);
 	}
 
+	public String encryptPassword(String plainPassword) {
+		
+		try
+        {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            final String encryptedString = Base64.encodeToString(cipher.doFinal(plainPassword.getBytes()), Base64.DEFAULT);
+            Log.e("chowlb", "Enc String: " + encryptedString);
+            return encryptedString;
+        }
+        catch (Exception e)
+        {
+            Log.e("chowlb", "Error while encrypting : " + e);
+        }
+        return null;
+	}
+	
+	public String decryptPassword(String encPassword) {
+		
+		 try
+	        {
+	            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+	            final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+	            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+	            final String decryptedString = new String(cipher.doFinal(Base64.decode(encPassword, Base64.DEFAULT)));
+	            return decryptedString;
+	        }
+	        catch (Exception e)
+	        {
+	            Log.e("chowlb", "Error while decrypting : " + e);
+
+	        }
+	        return null;
+	}
+	
 }

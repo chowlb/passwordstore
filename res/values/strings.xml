@@ -15,5 +15,7 @@
     <string name="add">Add Entry</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="toggleShowHidePass">Toggle show/hide password</string>
+    <string name="title_activity_login">LoginActivity</string>
 
 </resources>
