@@ -42,9 +42,14 @@
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-        <activity
-            android:name="com.chowlb.keystore.LoginActivity"
-            android:label="@string/title_activity_login" >
+        <activity android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:parentActivityName="com.chowlb.keystore.MainActivity"
+            android:screenOrientation="portrait" 
+            >
+             <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.chowlb.keystore.MainActivity" />
         </activity>
     </application>
 

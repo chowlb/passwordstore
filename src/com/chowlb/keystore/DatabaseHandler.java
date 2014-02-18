@@ -34,6 +34,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 	private static byte[] key = {
         0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79
 	};//"thisIsASecretKey";
+	final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
 	
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -178,11 +179,8 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		try
         {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            final String encryptedString = Base64.encodeToString(cipher.doFinal(plainPassword.getBytes()), Base64.DEFAULT);
-            Log.e("chowlb", "Enc String: " + encryptedString);
-            return encryptedString;
+            return new String (Base64.encode(cipher.doFinal(plainPassword.getBytes()), Base64.DEFAULT));
         }
         catch (Exception e)
         {
@@ -196,10 +194,9 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		 try
 	        {
 	            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-	            final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
 	            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-	            final String decryptedString = new String(cipher.doFinal(Base64.decode(encPassword, Base64.DEFAULT)));
-	            return decryptedString;
+	            return new String(cipher.doFinal(Base64.decode(encPassword, Base64.DEFAULT)));
+	            
 	        }
 	        catch (Exception e)
 	        {

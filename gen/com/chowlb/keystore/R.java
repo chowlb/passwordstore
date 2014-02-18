@@ -164,7 +164,9 @@ containing a value of this type.
         public static final int zOrderOnTop=0x7f010010;
     }
     public static final class color {
-        public static final int DarkGrey=0x7f04000a;
+        public static final int DarkGrey=0x7f04000c;
+        public static final int Lightblue=0x7f04000a;
+        public static final int White=0x7f04000b;
         public static final int common_action_bar_splitter=0x7f040009;
         /**  Sign-in Button Colors 
          */
@@ -177,8 +179,8 @@ containing a value of this type.
         public static final int common_signin_btn_light_text_disabled=0x7f040006;
         public static final int common_signin_btn_light_text_focused=0x7f040007;
         public static final int common_signin_btn_light_text_pressed=0x7f040005;
-        public static final int common_signin_btn_text_dark=0x7f04000b;
-        public static final int common_signin_btn_text_light=0x7f04000c;
+        public static final int common_signin_btn_text_dark=0x7f04000d;
+        public static final int common_signin_btn_text_light=0x7f04000e;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -222,23 +224,26 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001c;
     }
     public static final class id {
-        public static final int RelativeLayout1=0x7f050011;
-        public static final int addEntryMenuItem=0x7f050015;
+        public static final int RelativeLayout1=0x7f050014;
+        public static final int addEntryMenuItem=0x7f050018;
         public static final int addPasswordLayout=0x7f050005;
-        public static final int deleteMenuItem=0x7f050014;
+        public static final int button1=0x7f050012;
+        public static final int deleteMenuItem=0x7f050017;
         public static final int descriptionEditText=0x7f05000f;
         public static final int descriptionTextView=0x7f05000a;
         public static final int hybrid=0x7f050004;
         public static final int imageButton1=0x7f050010;
+        public static final int loginLayout=0x7f050011;
+        public static final int loginPassword=0x7f050013;
         public static final int nameEditText=0x7f05000b;
         public static final int nameTextView=0x7f050006;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int passwordEditText=0x7f05000d;
-        public static final int passwordEntryList=0x7f050012;
+        public static final int passwordEntryList=0x7f050015;
         public static final int passwordTextView=0x7f050008;
         public static final int satellite=0x7f050002;
-        public static final int saveMenuItem=0x7f050013;
+        public static final int saveMenuItem=0x7f050016;
         public static final int terrain=0x7f050003;
         public static final int usernameEditText=0x7f05000c;
         public static final int usernameTextView=0x7f050007;
@@ -250,8 +255,9 @@ containing a value of this type.
     }
     public static final class layout {
         public static final int activity_add_password=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int password_list_layout=0x7f030002;
+        public static final int activity_login=0x7f030001;
+        public static final int activity_main=0x7f030002;
+        public static final int password_list_layout=0x7f030003;
     }
     public static final class menu {
         public static final int add_password=0x7f0a0000;
@@ -361,12 +367,13 @@ containing a value of this type.
         public static final int description=0x7f060022;
         public static final int edit=0x7f060027;
         public static final int hello_world=0x7f06001c;
+        public static final int login=0x7f060028;
         public static final int name=0x7f06001e;
         public static final int password=0x7f060020;
         public static final int save=0x7f060023;
         public static final int title_activity_add_password=0x7f06001d;
-        public static final int title_activity_login=0x7f060029;
-        public static final int toggleShowHidePass=0x7f060028;
+        public static final int title_activity_login=0x7f06002a;
+        public static final int toggleShowHidePass=0x7f060029;
         public static final int username=0x7f06001f;
         public static final int website=0x7f060021;
     }
@@ -397,6 +404,7 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f090001;
+        public static final int LoginFormContainer=0x7f090002;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.

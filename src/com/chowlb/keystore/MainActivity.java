@@ -4,7 +4,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,15 +29,34 @@ public class MainActivity extends Activity {
 	List<PasswordEntry> passEntryList;
 	ListView peListView;
 	private AdView adView;
-	
+	String sessionPassword;
+	int sessionID;
+	int newSessionID = (int)(Math.random()*10000000);
+	long timestamp;
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		//Log.e("chowlb", "Activity Result");
-		super.onActivityResult(requestCode, resultCode, data);
+	protected void onResume() {
 		
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		sessionPassword = pref.getString("Password", "");
+		sessionID = pref.getInt("Sessionid", 0);
+		timestamp = pref.getLong("Timestamp", 0);
+		long currentTime = System.currentTimeMillis() / 1000L;
+		//Log.e("chowlb", "Session pass: " + sessionPassword);
+		//Log.e("chowlb", "Session ID: " + sessionID);
+		//Log.e("chowlb", "New Session ID: "  + newSessionID);
+		//Log.e("chowlb", "Timestamp: "  + timestamp);
+		//Log.e("chowlb", "CurrTime: " + currentTime);
+		//Log.e("chowlb", "**************************************************");
+		
+		if(sessionID != newSessionID || currentTime > timestamp) {
+			Intent i = new Intent(this, LoginActivity.class);
+			i.putExtra("sessionid", String.valueOf(newSessionID));
+			this.startActivity(i);	
+		}
+		
+		super.onResume();
 	}
-
+	
 	@Override
 	protected void onRestart() {
 		// TODO Auto-generated method stub
@@ -113,8 +135,6 @@ public class MainActivity extends Activity {
 		
 		AdRequest adRequest = new AdRequest.Builder().build();
 		adView.loadAd(adRequest);
-		//Log.e("chowlb", "END CREATE");
-		//db.deleteAll();
 	}
 
 	@Override
